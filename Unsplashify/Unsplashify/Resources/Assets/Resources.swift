@@ -10,6 +10,6 @@ import UIKit
 enum Resources {
 
     enum Images {
-        
+
     }
 }
