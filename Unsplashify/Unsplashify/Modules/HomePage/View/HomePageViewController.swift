@@ -8,7 +8,11 @@
 import UIKit
 import AVFoundation
 
-class HomePageViewController: UIViewController {
+protocol HomePageViewControllerProtocol {
+    func update()
+}
+
+final class HomePageViewController: UIViewController {
 
     // MARK: - Constants
 
@@ -26,9 +30,10 @@ class HomePageViewController: UIViewController {
 
     // MARK: - Properties
 
-    private lazy var mockImage = [UIImage]()
+    private var presenter: HomePagePresenterProtocol?
+    private lazy var images = [PhotoInfoModel]()
     private lazy var photosCollectionView: UICollectionView = {
-        
+
         let layout = PhotoCollectionLayout()
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
 
@@ -54,16 +59,12 @@ class HomePageViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
-
-        for _ in 0...5 {
-            mockImage.append(UIImage(named: "1")!)
-            mockImage.append(UIImage(named: "2")!)
-            mockImage.append(UIImage(named: "3")!)
-            mockImage.append(UIImage(named: "4")!)
-            mockImage.append(UIImage(named: "5")!)
-            mockImage.append(UIImage(named: "6")!)
-
+        Task {
+            await presenter?.loadPhotos()
+            self.images = presenter?.getPhotos() ?? [PhotoInfoModel(authorName: "bam")]
+            self.photosCollectionView.reloadData()
         }
+
         addSubviews()
         setUpConstraints()
     }
@@ -88,13 +89,16 @@ class HomePageViewController: UIViewController {
     }
 
     // MARK: - Injection
+    func set(presenter: HomePagePresenterProtocol) {
+        self.presenter = presenter
+    }
 }
 
 // MARK: - Extension: UICollectionViewDataSource
 
 extension HomePageViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return mockImage.count
+        return images.count
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -105,8 +109,8 @@ extension HomePageViewController: UICollectionViewDataSource {
             return UICollectionViewCell()
         }
         cell.configure(
-            image: mockImage[indexPath.row],
-            text: "I'm author from VC I'm author from VC I'm author from VC"
+            image: images[indexPath.row].image,
+            text: images[indexPath.row].authorName
         )
         return cell
     }
@@ -132,7 +136,10 @@ extension HomePageViewController: PhotoCollectionLayoutDelegate {
             width: width,
             height: CGFloat(MAXFLOAT)
         )
-        let rect = AVMakeRect(aspectRatio: mockImage[indexPath.row].size, insideRect: boundingRect)
+        guard let image = images[indexPath.row].image else {
+            return 0
+        }
+        let rect = AVMakeRect(aspectRatio: image.size, insideRect: boundingRect)
         return rect.size.height
     }
 

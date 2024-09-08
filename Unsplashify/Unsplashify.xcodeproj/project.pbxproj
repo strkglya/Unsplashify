@@ -8,6 +8,13 @@
 
 /* Begin PBXBuildFile section */
 		7A1CFE8B2C8DA19000A433E9 /* PhotoInfoModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A1CFE8A2C8DA19000A433E9 /* PhotoInfoModel.swift */; };
+		7A1CFE8D2C8DC82700A433E9 /* UnsplashService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A1CFE8C2C8DC82700A433E9 /* UnsplashService.swift */; };
+		7A1CFE922C8DCC5700A433E9 /* UnsplashServiceResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A1CFE912C8DCC5700A433E9 /* UnsplashServiceResponse.swift */; };
+		7A1CFE982C8DD96F00A433E9 /* BaseNetworkService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A1CFE972C8DD96F00A433E9 /* BaseNetworkService.swift */; };
+		7A1CFE9B2C8DDB8900A433E9 /* HTTPMethod.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A1CFE9A2C8DDB8900A433E9 /* HTTPMethod.swift */; };
+		7A1CFE9D2C8DDBA200A433E9 /* NetworkError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A1CFE9C2C8DDBA200A433E9 /* NetworkError.swift */; };
+		7A1CFEA02C8DE3B700A433E9 /* HomePagePresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A1CFE9F2C8DE3B700A433E9 /* HomePagePresenter.swift */; };
+		7A1CFEA32C8DF39400A433E9 /* HomePageBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A1CFEA22C8DF39400A433E9 /* HomePageBuilder.swift */; };
 		7AC310BB2C8C45D900E9E936 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7AC310BA2C8C45D900E9E936 /* AppDelegate.swift */; };
 		7AC310BD2C8C45D900E9E936 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7AC310BC2C8C45D900E9E936 /* SceneDelegate.swift */; };
 		7AC310BF2C8C45D900E9E936 /* HomePageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7AC310BE2C8C45D900E9E936 /* HomePageViewController.swift */; };
@@ -42,6 +49,13 @@
 
 /* Begin PBXFileReference section */
 		7A1CFE8A2C8DA19000A433E9 /* PhotoInfoModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoInfoModel.swift; sourceTree = "<group>"; };
+		7A1CFE8C2C8DC82700A433E9 /* UnsplashService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnsplashService.swift; sourceTree = "<group>"; };
+		7A1CFE912C8DCC5700A433E9 /* UnsplashServiceResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnsplashServiceResponse.swift; sourceTree = "<group>"; };
+		7A1CFE972C8DD96F00A433E9 /* BaseNetworkService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseNetworkService.swift; sourceTree = "<group>"; };
+		7A1CFE9A2C8DDB8900A433E9 /* HTTPMethod.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTTPMethod.swift; sourceTree = "<group>"; };
+		7A1CFE9C2C8DDBA200A433E9 /* NetworkError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkError.swift; sourceTree = "<group>"; };
+		7A1CFE9F2C8DE3B700A433E9 /* HomePagePresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomePagePresenter.swift; sourceTree = "<group>"; };
+		7A1CFEA22C8DF39400A433E9 /* HomePageBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomePageBuilder.swift; sourceTree = "<group>"; };
 		7AC310B72C8C45D900E9E936 /* Unsplashify.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Unsplashify.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7AC310BA2C8C45D900E9E936 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		7AC310BC2C8C45D900E9E936 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -85,6 +99,57 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		7A1CFE8E2C8DCC2800A433E9 /* UnsplashService */ = {
+			isa = PBXGroup;
+			children = (
+				7A1CFE902C8DCC3E00A433E9 /* Response */,
+				7A1CFE8F2C8DCC3600A433E9 /* Request  */,
+				7A1CFE8C2C8DC82700A433E9 /* UnsplashService.swift */,
+			);
+			path = UnsplashService;
+			sourceTree = "<group>";
+		};
+		7A1CFE8F2C8DCC3600A433E9 /* Request  */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = "Request ";
+			sourceTree = "<group>";
+		};
+		7A1CFE902C8DCC3E00A433E9 /* Response */ = {
+			isa = PBXGroup;
+			children = (
+				7A1CFE912C8DCC5700A433E9 /* UnsplashServiceResponse.swift */,
+			);
+			path = Response;
+			sourceTree = "<group>";
+		};
+		7A1CFE992C8DDB7400A433E9 /* Base */ = {
+			isa = PBXGroup;
+			children = (
+				7A1CFE972C8DD96F00A433E9 /* BaseNetworkService.swift */,
+				7A1CFE9A2C8DDB8900A433E9 /* HTTPMethod.swift */,
+				7A1CFE9C2C8DDBA200A433E9 /* NetworkError.swift */,
+			);
+			path = Base;
+			sourceTree = "<group>";
+		};
+		7A1CFE9E2C8DE3A000A433E9 /* Presenter */ = {
+			isa = PBXGroup;
+			children = (
+				7A1CFE9F2C8DE3B700A433E9 /* HomePagePresenter.swift */,
+			);
+			path = Presenter;
+			sourceTree = "<group>";
+		};
+		7A1CFEA12C8DF37E00A433E9 /* Builder */ = {
+			isa = PBXGroup;
+			children = (
+				7A1CFEA22C8DF39400A433E9 /* HomePageBuilder.swift */,
+			);
+			path = Builder;
+			sourceTree = "<group>";
+		};
 		7AC310AE2C8C45D900E9E936 = {
 			isa = PBXGroup;
 			children = (
@@ -172,6 +237,8 @@
 		7AC310EE2C8C481300E9E936 /* Services */ = {
 			isa = PBXGroup;
 			children = (
+				7A1CFE992C8DDB7400A433E9 /* Base */,
+				7A1CFE8E2C8DCC2800A433E9 /* UnsplashService */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -179,6 +246,8 @@
 		7AC310EF2C8C485C00E9E936 /* HomePage */ = {
 			isa = PBXGroup;
 			children = (
+				7A1CFEA12C8DF37E00A433E9 /* Builder */,
+				7A1CFE9E2C8DE3A000A433E9 /* Presenter */,
 				7AC310F92C8C5A8500E9E936 /* View */,
 				7A1CFE8A2C8DA19000A433E9 /* PhotoInfoModel.swift */,
 			);
@@ -353,12 +422,19 @@
 			files = (
 				7AC310FD2C8C6C7700E9E936 /* PhotoCollectionLayout.swift in Sources */,
 				7AC310F82C8C4EF100E9E936 /* LocalizedString.swift in Sources */,
+				7A1CFEA02C8DE3B700A433E9 /* HomePagePresenter.swift in Sources */,
+				7A1CFE9B2C8DDB8900A433E9 /* HTTPMethod.swift in Sources */,
 				7AC310BF2C8C45D900E9E936 /* HomePageViewController.swift in Sources */,
+				7A1CFE982C8DD96F00A433E9 /* BaseNetworkService.swift in Sources */,
 				7AC310F42C8C4EA000E9E936 /* Resources.swift in Sources */,
+				7A1CFEA32C8DF39400A433E9 /* HomePageBuilder.swift in Sources */,
 				7A1CFE8B2C8DA19000A433E9 /* PhotoInfoModel.swift in Sources */,
 				7AC310BB2C8C45D900E9E936 /* AppDelegate.swift in Sources */,
+				7A1CFE9D2C8DDBA200A433E9 /* NetworkError.swift in Sources */,
+				7A1CFE922C8DCC5700A433E9 /* UnsplashServiceResponse.swift in Sources */,
 				7AC310BD2C8C45D900E9E936 /* SceneDelegate.swift in Sources */,
 				7AC310FB2C8C5ADF00E9E936 /* HomePageCollectionCell.swift in Sources */,
+				7A1CFE8D2C8DC82700A433E9 /* UnsplashService.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
