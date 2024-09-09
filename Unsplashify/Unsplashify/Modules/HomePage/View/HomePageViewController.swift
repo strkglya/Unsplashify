@@ -46,6 +46,7 @@ class HomePageViewController: UIViewController {
 
         layout.delegate = self
         collectionView.dataSource = self
+        collectionView.delegate = self
         return collectionView
     }()
 
@@ -88,6 +89,13 @@ class HomePageViewController: UIViewController {
     }
 
     // MARK: - Injection
+}
+
+extension HomePageViewController: UICollectionViewDelegate {
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let detailsVC = PhotoDetailsBuilder(context: PhotoInfoModel(imageURL: mockImage[indexPath.row], authorName: "")).toPresent()
+        self.show(detailsVC, sender: nil)
+    }
 }
 
 // MARK: - Extension: UICollectionViewDataSource
