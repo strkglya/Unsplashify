@@ -41,7 +41,7 @@ final class PhotoDetailsViewController: UIViewController {
         let imageView = UIImageView()
         imageView.layer.cornerRadius = Constants.imageViewCornerRadius
         imageView.clipsToBounds = true
-        imageView.contentMode = .scaleAspectFill
+        imageView.contentMode = .redraw
         return imageView
     }()
 

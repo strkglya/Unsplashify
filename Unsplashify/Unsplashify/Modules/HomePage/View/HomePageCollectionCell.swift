@@ -23,7 +23,7 @@ class HomePageCollectionCell: UICollectionViewCell {
 
     private lazy var photoImageView: UIImageView = {
         let imageView = UIImageView()
-        imageView.contentMode = .scaleToFill
+        imageView.contentMode = .scaleAspectFill
         imageView.clipsToBounds = true
         return imageView
     }()

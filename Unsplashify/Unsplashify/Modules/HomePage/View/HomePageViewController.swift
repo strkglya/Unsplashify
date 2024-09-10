@@ -12,7 +12,15 @@ protocol HomePageViewControllerProtocol: AnyObject {
     func update()
 }
 
-final class HomePageViewController: UIViewController {
+final class HomePageViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        <#code#>
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        <#code#>
+    }
+    
 
     // MARK: - Constants
 
@@ -31,7 +39,33 @@ final class HomePageViewController: UIViewController {
     // MARK: - Properties
 
     private var presenter: HomePagePresenterProtocol?
-    private lazy var images = [PhotoInfoModel]()
+    private lazy var photos = [PhotoInfoModel]()
+
+    private lazy var photoSearchBar: UISearchBar = {
+        let searchBar = UISearchBar()
+        searchBar.delegate = self
+        searchBar.autocorrectionType = .no
+        searchBar.searchBarStyle = .minimal
+        searchBar.placeholder = "Enter text"
+        return searchBar
+    }()
+
+    private lazy var loadingIndicator: UIActivityIndicatorView = {
+        let indicator = UIActivityIndicatorView(style: .large)
+        indicator.color = .gray
+        indicator.hidesWhenStopped = true
+        return indicator
+    }()
+
+    private lazy var loadingLabel: UILabel = {
+        let label = UILabel()
+        label.text = "Загружаем фотографии"
+        label.textAlignment = .center
+        label.font = UIFont.systemFont(ofSize: 16)
+        label.textColor = .gray
+        return label
+    }()
+
     private lazy var photosCollectionView: UICollectionView = {
 
         let layout = PhotoCollectionLayout()
@@ -70,28 +104,70 @@ final class HomePageViewController: UIViewController {
     // MARK: - Private Methods
 
     private func addSubviews() {
+        view.addSubview(loadingIndicator)
+        view.addSubview(loadingLabel)
+        view.addSubview(photoSearchBar)
         view.addSubview(photosCollectionView)
     }
 
     private func loadPhotos() {
         Task {
+            showLoadingIndicator()
             guard let presenter = presenter else {
                 return
             }
-            await presenter.loadPhotos()
-            self.images = presenter.getPhotos()
+            await presenter.loadAllPhotos()
+            self.photos = presenter.getPhotos()
+            hideLoadingIndicator()
             self.photosCollectionView.reloadData()
         }
     }
 
-    private func setUpConstraints() {
+    private func loadSearchPhotos(searchTerm: String) {
+        Task {
+            showLoadingIndicator()
+            guard let presenter = presenter else {
+                return
+            }
+            await presenter.findBySearchTerm(searchWord: searchTerm)
+            self.photos = presenter.getPhotos()
+            hideLoadingIndicator()
+            self.photosCollectionView.reloadData()
+        }
+    }
 
+    private func showLoadingIndicator() {
+        loadingIndicator.startAnimating()
+        loadingLabel.isHidden = false
+        photosCollectionView.isHidden = true
+    }
+
+    private func hideLoadingIndicator() {
+        loadingIndicator.stopAnimating()
+        loadingLabel.isHidden = true
+        photosCollectionView.isHidden = false
+    }
+
+    private func setUpConstraints() {
+        photoSearchBar.translatesAutoresizingMaskIntoConstraints = false
         photosCollectionView.translatesAutoresizingMaskIntoConstraints = false
+        loadingIndicator.translatesAutoresizingMaskIntoConstraints = false
+        loadingLabel.translatesAutoresizingMaskIntoConstraints = false
+
         NSLayoutConstraint.activate([
-            photosCollectionView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+
+            photoSearchBar.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            photoSearchBar.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 8),
+            photoSearchBar.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -8),
+
+            photosCollectionView.topAnchor.constraint(equalTo: photoSearchBar.bottomAnchor),
             photosCollectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             photosCollectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            photosCollectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+            photosCollectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            loadingIndicator.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            loadingIndicator.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+            loadingLabel.topAnchor.constraint(equalTo: loadingIndicator.bottomAnchor, constant: 16),
+            loadingLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor)
         ])
     }
 
@@ -105,7 +181,7 @@ final class HomePageViewController: UIViewController {
 
 extension HomePageViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let detailsViewController = PhotoDetailsBuilder(context: images[indexPath.row]).toPresent()
+        let detailsViewController = PhotoDetailsBuilder(context: photos[indexPath.row]).toPresent()
         navigationController?.pushViewController(detailsViewController, animated: true)
     }
 }
@@ -114,7 +190,7 @@ extension HomePageViewController: UICollectionViewDelegate {
 
 extension HomePageViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return images.count
+        return photos.count
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -125,8 +201,8 @@ extension HomePageViewController: UICollectionViewDataSource {
             return UICollectionViewCell()
         }
         cell.configure(
-            image: images[indexPath.row].image,
-            text: images[indexPath.row].description
+            image: photos[indexPath.row].image,
+            text: photos[indexPath.row].description
         )
         return cell
     }
@@ -141,6 +217,16 @@ extension HomePageViewController: UICollectionViewDataSource {
     }
 }
 
+extension HomePageViewController: UISearchBarDelegate {
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        if let searchText = searchBar.text {
+            loadSearchPhotos(searchTerm: searchText)
+        }
+        searchBar.resignFirstResponder()
+    }
+
+}
+
 // MARK: - Extension: PhotoCollectionLayoutDelegate
 
 extension HomePageViewController: PhotoCollectionLayoutDelegate {
@@ -152,8 +238,8 @@ extension HomePageViewController: PhotoCollectionLayoutDelegate {
             width: width,
             height: CGFloat(MAXFLOAT)
         )
-        guard let image = images[indexPath.row].image else {
-            return 0
+        guard let image = photos[indexPath.row].image else {
+            return .zero
         }
         let rect = AVMakeRect(aspectRatio: image.size, insideRect: boundingRect)
         return rect.size.height
@@ -165,7 +251,7 @@ extension HomePageViewController: PhotoCollectionLayoutDelegate {
         let bottomPadding = Constants.bottomPadding
         let captionFont = UIFont.systemFont(ofSize: Constants.captionFontSize)
         let captionHeight = height(
-            for: "AAAAA rigurier woijgfwiegjiowg wiw",
+            for: photos[indexPath.row].description,
             with: captionFont,
             width: width
         )
@@ -193,7 +279,7 @@ extension HomePageViewController: PhotoCollectionLayoutDelegate {
 extension HomePageViewController: HomePageViewControllerProtocol {
     func update() {
         DispatchQueue.main.async {
-            self.photosCollectionView.reloadData()
+            // self.photosCollectionView.reloadData()
         }
     }
 }

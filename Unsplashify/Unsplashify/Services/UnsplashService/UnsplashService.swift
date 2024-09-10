@@ -13,6 +13,7 @@ private enum Constants {
 
 protocol UnsplashServiceProtocol {
     func getAllPhotos() async throws -> [UnsplashServiceResponse]
+    func searchForPhotos(query: String) async throws -> UnsplashSearchResponse
 }
 
 final class UnsplashService: UnsplashServiceProtocol {
@@ -30,8 +31,26 @@ final class UnsplashService: UnsplashServiceProtocol {
         urlComponents.queryItems = [
             URLQueryItem(name: "per_page", value: "30")
         ]
-        guard let request = networkService.createRequest(for: urlComponents.url, httpMethod: .get) else {
+        guard let request = networkService.createRequest(
+            for: urlComponents.url,
+            httpMethod: .get
+        ) else {
             throw NetworkError.invalidUrl
+        }
+        return try await networkService.executeRequest(request: request)
+    }
+
+    func searchForPhotos(query: String) async throws -> UnsplashSearchResponse {
+        var urlComponents = URLComponents(string: Constants.baseURL)!
+        urlComponents.path = "/search/photos"
+        urlComponents.queryItems = [URLQueryItem(name: "query", value: query),
+                                    URLQueryItem(name: "per_page", value: "30")
+        ]
+        guard let request = networkService.createRequest(
+            for: urlComponents.url,
+            httpMethod: .get
+        ) else {
+            throw NetworkError.noResponse
         }
         return try await networkService.executeRequest(request: request)
     }
