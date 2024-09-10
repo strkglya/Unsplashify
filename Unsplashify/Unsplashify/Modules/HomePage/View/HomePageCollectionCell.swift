@@ -27,8 +27,8 @@ class HomePageCollectionCell: UICollectionViewCell {
         imageView.clipsToBounds = true
         return imageView
     }()
-
-    private lazy var authorNameLabel: UILabel = {
+    private let activityIndicator = UIActivityIndicatorView(style: .medium)
+    private lazy var descriptionLabel: UILabel = {
         let label = UILabel()
         label.font = .systemFont(ofSize: Constants.labelFontSize)
         label.numberOfLines = .zero
@@ -57,32 +57,43 @@ class HomePageCollectionCell: UICollectionViewCell {
 
     // MARK: - Methods
 
-    func configure(image: UIImage, text: String) {
-        photoImageView.image = image
-        authorNameLabel.text = text
-    }
+    func configure(image: UIImage?, text: String) {
+            if let image = image {
+                photoImageView.image = image
+                activityIndicator.stopAnimating()
+                descriptionLabel.text = text
+            } else {
+                activityIndicator.startAnimating()
+                photoImageView.image = nil
+            }
+        }
 
     // MARK: - Private Methods
 
     private func addSubviews() {
+        addSubview(activityIndicator)
         addSubview(photoImageView)
-        addSubview(authorNameLabel)
+        addSubview(descriptionLabel)
     }
 
     private func setUpConstraints() {
+        activityIndicator.translatesAutoresizingMaskIntoConstraints = false
         photoImageView.translatesAutoresizingMaskIntoConstraints = false
-        authorNameLabel.translatesAutoresizingMaskIntoConstraints = false
+        descriptionLabel.translatesAutoresizingMaskIntoConstraints = false
 
         NSLayoutConstraint.activate([
 
-            authorNameLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: Constants.labelLeadingTrailingOffset),
-            authorNameLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -Constants.labelLeadingTrailingOffset),
-            authorNameLabel.bottomAnchor.constraint(equalTo: bottomAnchor, constant: Constants.labelBottomOffset),
+            descriptionLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: Constants.labelLeadingTrailingOffset),
+            descriptionLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -Constants.labelLeadingTrailingOffset),
+            descriptionLabel.bottomAnchor.constraint(equalTo: bottomAnchor, constant: Constants.labelBottomOffset),
 
             photoImageView.topAnchor.constraint(equalTo: topAnchor),
             photoImageView.leadingAnchor.constraint(equalTo: leadingAnchor),
             photoImageView.trailingAnchor.constraint(equalTo: trailingAnchor),
-            photoImageView.bottomAnchor.constraint(equalTo: authorNameLabel.topAnchor, constant: Constants.photoImageBottomOffset)
+            photoImageView.bottomAnchor.constraint(equalTo: descriptionLabel.topAnchor, constant: Constants.photoImageBottomOffset),
+
+            activityIndicator.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
+            activityIndicator.centerYAnchor.constraint(equalTo: contentView.centerYAnchor)
         ])
     }
 

@@ -8,7 +8,11 @@
 import UIKit
 import AVFoundation
 
-class HomePageViewController: UIViewController {
+protocol HomePageViewControllerProtocol: AnyObject {
+    func update()
+}
+
+final class HomePageViewController: UIViewController {
 
     // MARK: - Constants
 
@@ -26,9 +30,10 @@ class HomePageViewController: UIViewController {
 
     // MARK: - Properties
 
-    private lazy var mockImage = [UIImage]()
+    private var presenter: HomePagePresenterProtocol?
+    private lazy var images = [PhotoInfoModel]()
     private lazy var photosCollectionView: UICollectionView = {
-        
+
         let layout = PhotoCollectionLayout()
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
 
@@ -45,8 +50,8 @@ class HomePageViewController: UIViewController {
         )
 
         layout.delegate = self
-        collectionView.dataSource = self
         collectionView.delegate = self
+        collectionView.dataSource = self
         return collectionView
     }()
 
@@ -55,16 +60,7 @@ class HomePageViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
-
-        for _ in 0...5 {
-            mockImage.append(UIImage(named: "1")!)
-            mockImage.append(UIImage(named: "2")!)
-            mockImage.append(UIImage(named: "3")!)
-            mockImage.append(UIImage(named: "4")!)
-            mockImage.append(UIImage(named: "5")!)
-            mockImage.append(UIImage(named: "6")!)
-
-        }
+        loadPhotos()
         addSubviews()
         setUpConstraints()
     }
@@ -75,6 +71,17 @@ class HomePageViewController: UIViewController {
 
     private func addSubviews() {
         view.addSubview(photosCollectionView)
+    }
+
+    private func loadPhotos() {
+        Task {
+            guard let presenter = presenter else {
+                return
+            }
+            await presenter.loadPhotos()
+            self.images = presenter.getPhotos()
+            self.photosCollectionView.reloadData()
+        }
     }
 
     private func setUpConstraints() {
@@ -89,12 +96,17 @@ class HomePageViewController: UIViewController {
     }
 
     // MARK: - Injection
+    func set(presenter: HomePagePresenterProtocol) {
+        self.presenter = presenter
+    }
 }
+
+// MARK: - Extension: UICollectionViewDelegate
 
 extension HomePageViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let detailsVC = PhotoDetailsBuilder(context: PhotoInfoModel(imageURL: mockImage[indexPath.row], authorName: "")).toPresent()
-        self.show(detailsVC, sender: nil)
+        let detailsViewController = PhotoDetailsBuilder(context: images[indexPath.row]).toPresent()
+        navigationController?.pushViewController(detailsViewController, animated: true)
     }
 }
 
@@ -102,7 +114,7 @@ extension HomePageViewController: UICollectionViewDelegate {
 
 extension HomePageViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return mockImage.count
+        return images.count
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -113,8 +125,8 @@ extension HomePageViewController: UICollectionViewDataSource {
             return UICollectionViewCell()
         }
         cell.configure(
-            image: mockImage[indexPath.row],
-            text: "I'm author from VC I'm author from VC I'm author from VC"
+            image: images[indexPath.row].image,
+            text: images[indexPath.row].description
         )
         return cell
     }
@@ -140,7 +152,10 @@ extension HomePageViewController: PhotoCollectionLayoutDelegate {
             width: width,
             height: CGFloat(MAXFLOAT)
         )
-        let rect = AVMakeRect(aspectRatio: mockImage[indexPath.row].size, insideRect: boundingRect)
+        guard let image = images[indexPath.row].image else {
+            return 0
+        }
+        let rect = AVMakeRect(aspectRatio: image.size, insideRect: boundingRect)
         return rect.size.height
     }
 
@@ -168,10 +183,17 @@ extension HomePageViewController: PhotoCollectionLayoutDelegate {
                 height: maxHeight
             ),
             options: .usesLineFragmentOrigin,
-            attributes: textAttributes, 
+            attributes: textAttributes,
             context: nil
         )
         return ceil(boundingRect.height)
     }
 }
 
+extension HomePageViewController: HomePageViewControllerProtocol {
+    func update() {
+        DispatchQueue.main.async {
+            self.photosCollectionView.reloadData()
+        }
+    }
+}

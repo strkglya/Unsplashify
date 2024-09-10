@@ -8,6 +8,8 @@
 import UIKit
 
 struct PhotoInfoModel {
-    let imageURL: UIImage
+    var image: UIImage?
     let authorName: String
+    let description: String
+    let likes: Int
 }

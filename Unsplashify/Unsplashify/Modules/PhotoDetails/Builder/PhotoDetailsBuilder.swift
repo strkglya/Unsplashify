@@ -7,11 +7,6 @@
 
 import UIKit
 
-// TODO: Revove after merge
-protocol Presentable {
-    func toPresent() -> UIViewController
-}
-
 final class PhotoDetailsBuilder: Presentable {
 
     // MARK: - Properties

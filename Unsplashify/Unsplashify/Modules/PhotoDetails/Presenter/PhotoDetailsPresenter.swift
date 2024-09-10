@@ -23,7 +23,10 @@ final class PhotoDetailsPresenter: PhotoDetailsPresenterProtocol {
 
     // MARK: - Initializer
 
-    init(viewController: PhotoDetailsViewControllerProtocol, model: PhotoInfoModel) {
+    init(
+        viewController: PhotoDetailsViewControllerProtocol,
+        model: PhotoInfoModel
+    ) {
         self.viewController = viewController
         self.model = model
     }
@@ -36,7 +39,7 @@ final class PhotoDetailsPresenter: PhotoDetailsPresenterProtocol {
 
     func shareImage() {
         let activityIndicator = UIActivityViewController(
-            activityItems: [model.imageURL],
+            activityItems: [model.image],
             applicationActivities: nil
         )
         activityIndicator.completionWithItemsHandler = { [weak self] activity, success, _, _ in

@@ -41,7 +41,7 @@ final class PhotoDetailsViewController: UIViewController {
         let imageView = UIImageView()
         imageView.layer.cornerRadius = Constants.imageViewCornerRadius
         imageView.clipsToBounds = true
-        imageView.contentMode = .scaleToFill
+        imageView.contentMode = .scaleAspectFill
         return imageView
     }()
 
@@ -52,6 +52,7 @@ final class PhotoDetailsViewController: UIViewController {
             weight: .semibold
         )
         label.text = "This is author name"
+        label.numberOfLines = .zero
         return label
     }()
 
@@ -62,6 +63,7 @@ final class PhotoDetailsViewController: UIViewController {
             weight: .regular
         )
         label.text = "This is a description"
+        label.numberOfLines = .zero
         return label
     }()
 
@@ -124,10 +126,6 @@ final class PhotoDetailsViewController: UIViewController {
     }
 
     // MARK: - Methods
-
-    func configure(model: PhotoInfoModel) {
-        detailsImageView.image = model.imageURL
-    }
 
     // MARK: - Private Methods
 
@@ -213,7 +211,9 @@ final class PhotoDetailsViewController: UIViewController {
 extension PhotoDetailsViewController: PhotoDetailsViewControllerProtocol {
     
     func update(model: PhotoInfoModel) {
-        detailsImageView.image = model.imageURL
+        detailsImageView.image = model.image
+        authorLabel.text = model.authorName
+        descriptionLabel.text = model.description
     }
 
     func present(controller: UIViewController) {
