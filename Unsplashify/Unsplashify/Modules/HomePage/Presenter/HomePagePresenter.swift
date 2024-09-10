@@ -13,19 +13,17 @@ protocol HomePagePresenterProtocol {
 }
 
 final class HomePagePresenter: HomePagePresenterProtocol {
-    // MARK: - Constants
 
     // MARK: - Properties
-    private var page = 1
-    private var service: UnsplashServiceProtocol?
-    private var photos = [PhotoInfoModel]() {
-        didSet {
-            print(photos)
-        }
-    }
-    // MARK: - Initializer
 
-    // MARK: - Override
+    private var service: UnsplashServiceProtocol?
+    private weak var viewController: HomePageViewControllerProtocol?
+
+    private var photos = [PhotoInfoModel]()
+
+    init(viewController: HomePageViewControllerProtocol) {
+        self.viewController = viewController
+    }
 
     // MARK: - Methods
 
@@ -34,26 +32,33 @@ final class HomePagePresenter: HomePagePresenterProtocol {
     }
 
     func loadPhotos() async {
-        do {
-            // Получаем результат с сервиса
-            let result = try await service?.getAllPhotos(page: page) ?? []
 
-            // Создаем модели с пустыми изображениями
-            self.photos = result.map { PhotoInfoModel(image: nil, authorName: $0.user.name) }
-            
-            // Асинхронная загрузка изображений для каждой фотографии
+        do {
+            let result = try await service?.getAllPhotos() ?? []
+            let newPhotos = result.map { 
+                PhotoInfoModel(
+                    image: nil,
+                    authorName: $0.user.name,
+                    description: $0.description,
+                    likes: $0.likes
+                )
+            }
+
+            photos.append(contentsOf: newPhotos)
+
             for (index, photoResponse) in result.enumerated() {
                 if let imageURL = URL(string: photoResponse.urls.regular) {
                     do {
-                        // Загружаем изображение асинхронно
                         let image = try await loadImage(from: imageURL)
-                        self.photos[index].image = image
+                        if index < photos.count {
+                            photos[index].image = image
+                        }
                     } catch {
                         print("Ошибка загрузки изображения: \(error)")
                     }
                 }
             }
-            
+            viewController?.update()
         } catch {
             print("Ошибка загрузки фотографий: \(error)")
         }

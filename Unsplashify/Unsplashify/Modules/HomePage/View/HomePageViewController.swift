@@ -8,7 +8,7 @@
 import UIKit
 import AVFoundation
 
-protocol HomePageViewControllerProtocol {
+protocol HomePageViewControllerProtocol: AnyObject {
     func update()
 }
 
@@ -50,6 +50,7 @@ final class HomePageViewController: UIViewController {
         )
 
         layout.delegate = self
+        collectionView.delegate = self
         collectionView.dataSource = self
         return collectionView
     }()
@@ -59,12 +60,7 @@ final class HomePageViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
-        Task {
-            await presenter?.loadPhotos()
-            self.images = presenter?.getPhotos() ?? [PhotoInfoModel(authorName: "bam")]
-            self.photosCollectionView.reloadData()
-        }
-
+        loadPhotos()
         addSubviews()
         setUpConstraints()
     }
@@ -75,6 +71,17 @@ final class HomePageViewController: UIViewController {
 
     private func addSubviews() {
         view.addSubview(photosCollectionView)
+    }
+
+    private func loadPhotos() {
+        Task {
+            guard let presenter = presenter else {
+                return
+            }
+            await presenter.loadPhotos()
+            self.images = presenter.getPhotos()
+            self.photosCollectionView.reloadData()
+        }
     }
 
     private func setUpConstraints() {
@@ -94,6 +101,15 @@ final class HomePageViewController: UIViewController {
     }
 }
 
+// MARK: - Extension: UICollectionViewDelegate
+
+extension HomePageViewController: UICollectionViewDelegate {
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let detailsViewController = PhotoDetailsBuilder(context: images[indexPath.row]).toPresent()
+        navigationController?.pushViewController(detailsViewController, animated: true)
+    }
+}
+
 // MARK: - Extension: UICollectionViewDataSource
 
 extension HomePageViewController: UICollectionViewDataSource {
@@ -110,7 +126,7 @@ extension HomePageViewController: UICollectionViewDataSource {
         }
         cell.configure(
             image: images[indexPath.row].image,
-            text: images[indexPath.row].authorName
+            text: images[indexPath.row].description
         )
         return cell
     }
@@ -167,10 +183,17 @@ extension HomePageViewController: PhotoCollectionLayoutDelegate {
                 height: maxHeight
             ),
             options: .usesLineFragmentOrigin,
-            attributes: textAttributes, 
+            attributes: textAttributes,
             context: nil
         )
         return ceil(boundingRect.height)
     }
 }
 
+extension HomePageViewController: HomePageViewControllerProtocol {
+    func update() {
+        DispatchQueue.main.async {
+            self.photosCollectionView.reloadData()
+        }
+    }
+}

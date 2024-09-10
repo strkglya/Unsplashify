@@ -13,13 +13,18 @@ struct UnsplashServiceResponse: Codable {
     let width: Int
     let height: Int
     let blurHash: String?
+    let description: String
+    let likes: Int
     let urls: Urls
     let user: User
+    let date: String
 
     enum CodingKeys: String, CodingKey {
-        case id, width, height, urls, user
+        case id, width, height, urls, user, likes
         case createdAt = "created_at"
         case blurHash = "blur_hash"
+        case description = "alt_description"
+        case date = "updated_at"
     }
 }
 

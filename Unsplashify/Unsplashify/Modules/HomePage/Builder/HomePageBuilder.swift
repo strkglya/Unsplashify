@@ -17,9 +17,9 @@ final class HomePageBuilder: Presentable {
 
         let networkService = BaseNetworkService()
         let unsplashService = UnsplashService(networkService: networkService)
-        let presenter = HomePagePresenter()
-        presenter.set(service: unsplashService)
         let viewController = HomePageViewController()
+        let presenter = HomePagePresenter(viewController: viewController)
+        presenter.set(service: unsplashService)
         viewController.set(presenter: presenter)
 
         return viewController

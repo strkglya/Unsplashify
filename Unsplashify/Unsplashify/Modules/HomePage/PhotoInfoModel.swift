@@ -10,4 +10,6 @@ import UIKit
 struct PhotoInfoModel {
     var image: UIImage?
     let authorName: String
+    let description: String
+    let likes: Int
 }
