@@ -7,6 +7,10 @@
 
 import Foundation
 
+struct UnsplashSearchResponse: Codable {
+    let results: [UnsplashServiceResponse]
+}
+
 struct UnsplashServiceResponse: Codable {
     let id: String
     let createdAt: String

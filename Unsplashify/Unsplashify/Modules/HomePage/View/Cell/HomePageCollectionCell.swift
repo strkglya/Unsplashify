@@ -23,7 +23,7 @@ class HomePageCollectionCell: UICollectionViewCell {
 
     private lazy var photoImageView: UIImageView = {
         let imageView = UIImageView()
-        imageView.contentMode = .scaleToFill
+        imageView.contentMode = .scaleAspectFill
         imageView.clipsToBounds = true
         return imageView
     }()
@@ -58,15 +58,15 @@ class HomePageCollectionCell: UICollectionViewCell {
     // MARK: - Methods
 
     func configure(image: UIImage?, text: String) {
-            if let image = image {
-                photoImageView.image = image
-                activityIndicator.stopAnimating()
-                descriptionLabel.text = text
-            } else {
-                activityIndicator.startAnimating()
-                photoImageView.image = nil
-            }
+        if let image = image {
+            photoImageView.image = image
+            activityIndicator.stopAnimating()
+            descriptionLabel.text = text
+        } else {
+            activityIndicator.startAnimating()
+            photoImageView.image = nil
         }
+    }
 
     // MARK: - Private Methods
 

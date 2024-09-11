@@ -19,4 +19,15 @@ enum Images {
             }
         }
     }
+
+    enum RecentSearchesTableViewCell {
+        case recent
+
+        var image: UIImage? {
+            switch self {
+            case .recent:
+                return UIImage(systemName: "clock.arrow.circlepath")
+            }
+        }
+    }
 }
