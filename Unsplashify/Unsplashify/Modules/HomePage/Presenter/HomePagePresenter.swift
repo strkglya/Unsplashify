@@ -11,36 +11,80 @@ protocol HomePagePresenterProtocol {
     func loadAllPhotos() async
     func getPhotos() -> [PhotoInfoModel]
     func findBySearchTerm(searchWord: String) async
+    func addSearchTermToRecent(_ searchTerm: String)
+    func loadRecentSearches()
+    func getFilteredSearches() -> [String]
+    func filterByTerm(searchTerm: String)
 }
 
 final class HomePagePresenter: HomePagePresenterProtocol {
 
+    private enum Constants {
+        static let maximumRecentTerms = 5
+    }
+
     // MARK: - Properties
 
     private var service: UnsplashServiceProtocol?
+    private var userDefaultsManager: UserDefaultsManagerProtocol?
     private weak var viewController: HomePageViewControllerProtocol?
 
-    private var photos = [PhotoInfoModel]() {
+    private var photos = [PhotoInfoModel]() 
+
+    private var recentSearches: [String] = []
+    private var filteredRecentSearches: [String] = [] {
         didSet {
-            print("\(photos)///////////////////////")
+            viewController?.update()
         }
     }
-
-    init(viewController: HomePageViewControllerProtocol) {
+    init(
+        viewController: HomePageViewControllerProtocol,
+        userDefaultsManager: UserDefaultsManagerProtocol
+    ) {
         self.viewController = viewController
+        self.userDefaultsManager = userDefaultsManager
     }
 
     // MARK: - Methods
+
+    func loadRecentSearches() {
+        recentSearches = userDefaultsManager?.recentSearches ?? []
+        filteredRecentSearches = recentSearches
+    }
+
+    func addSearchTermToRecent(_ searchTerm: String) {
+        if recentSearches.contains(searchTerm) {
+            return
+        }
+        recentSearches.append(searchTerm)
+        if recentSearches.count > Constants.maximumRecentTerms {
+            recentSearches.removeFirst()
+        }
+        saveRecentSearches()
+    }
+
+    func filterByTerm(searchTerm: String) {
+        if searchTerm.isEmpty {
+            filteredRecentSearches = recentSearches
+        } else {
+            filteredRecentSearches = recentSearches.filter {
+                $0.localizedCaseInsensitiveContains(searchTerm)
+            }
+        }
+    }
+
+    func getFilteredSearches() -> [String] {
+        return filteredRecentSearches
+    }
 
     func getPhotos() -> [PhotoInfoModel] {
         return photos
     }
 
     func loadAllPhotos() async {
-
         do {
             let result = try await service?.getAllPhotos() ?? []
-            let newPhotos = result.map { 
+            let newPhotos = result.map {
                 PhotoInfoModel(
                     image: nil,
                     authorName: $0.user.name,
@@ -48,22 +92,8 @@ final class HomePagePresenter: HomePagePresenterProtocol {
                     likes: $0.likes
                 )
             }
-
             photos = newPhotos
-
-            for (index, photoResponse) in result.enumerated() {
-                if let imageURL = URL(string: photoResponse.urls.regular) {
-                    do {
-                        let image = try await loadImage(from: imageURL)
-                        if index < photos.count {
-                            photos[index].image = image
-                        }
-                    } catch {
-                        print("Ошибка загрузки изображения: \(error)")
-                    }
-                }
-            }
-            viewController?.update()
+            await loadImagesForPhotos(from: result)
         } catch {
             print("Ошибка загрузки фотографий: \(error)")
         }
@@ -83,28 +113,33 @@ final class HomePagePresenter: HomePagePresenterProtocol {
                 )
             }
             photos = newPhotos
-
-            for (index, photoResponse) in searchResult.enumerated() {
-                if let imageURL = URL(string: photoResponse.urls.regular) {
-                    do {
-                        let image = try await loadImage(from: imageURL)
-                        if index < photos.count {
-                            photos[index].image = image
-                        }
-                    } catch {
-                        print("Ошибка загрузки изображения: \(error)")
-                    }
-                }
-            }
-            viewController?.update()
+            await loadImagesForPhotos(from: searchResult)
         } catch {
             print(error.localizedDescription)
         }
     }
-
     // MARK: - Private Methods
 
-    func loadImage(from url: URL) async throws -> UIImage? {
+    private func saveRecentSearches() {
+        userDefaultsManager?.recentSearches = recentSearches
+    }
+
+    private func loadImagesForPhotos(from photoResponses: [UnsplashServiceResponse]) async {
+        for (index, photoResponse) in photoResponses.enumerated() {
+            if let imageURL = URL(string: photoResponse.urls.regular) {
+                do {
+                    let image = try await transformImage(from: imageURL)
+                    if index < photos.count {
+                        photos[index].image = image
+                    }
+                } catch {
+                    print("Ошибка загрузки изображения: \(error)")
+                }
+            }
+        }
+    }
+
+    private func transformImage(from url: URL) async throws -> UIImage? {
 
         let (data, _) = try await URLSession.shared.data(from: url)
         guard let image = UIImage(data: data) else {

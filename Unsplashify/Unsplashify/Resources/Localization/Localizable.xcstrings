@@ -4,30 +4,6 @@
     "API access rate exceeded" : {
       "comment" : "Forbidden"
     },
-    "Failed to decode data" : {
-      "comment" : "Decoding Failure"
-    },
-    "Failed to make a request" : {
-      "comment" : "Invalid Request"
-    },
-    "Failed to read data" : {
-      "comment" : "Invalid Data"
-    },
-    "Invalid url and/or query" : {
-      "comment" : "Invalid URL"
-    },
-    "No response from the server" : {
-      "comment" : "No Response"
-    },
-    "Requested page was not found" : {
-      "comment" : "Not Found"
-    },
-    "Unathorized access to the server" : {
-      "comment" : "Unauthorized"
-    },
-    "Unexpected status code (code)" : {
-        "comment" : "Unexpected Code"
-    },
     "CancelAction.String" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -41,6 +17,72 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Отмена"
+          }
+        }
+      }
+    },
+    "EnterText.String" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enter text"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Введите текст"
+          }
+        }
+      }
+    },
+    "Failed to decode data" : {
+      "comment" : "Decoding Failure"
+    },
+    "Failed to make a request" : {
+      "comment" : "Invalid Request"
+    },
+    "Failed to read data" : {
+      "comment" : "Invalid Data"
+    },
+    "Invalid url and/or query" : {
+      "comment" : "Invalid URL"
+    },
+    "LoadingPhotos.String" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Loading photos"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Загружаем фотографии"
+          }
+        }
+      }
+    },
+    "No response from the server" : {
+      "comment" : "No Response"
+    },
+    "NoPhotosFound.String" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No photos found"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ничего не найдено"
           }
         }
       }
@@ -78,6 +120,9 @@
           }
         }
       }
+    },
+    "Requested page was not found" : {
+      "comment" : "Not Found"
     },
     "SaveButtonTitle.String" : {
       "extractionState" : "manual",
@@ -146,6 +191,12 @@
           }
         }
       }
+    },
+    "Unathorized access to the server" : {
+      "comment" : "Unauthorized"
+    },
+    "Unexpected status code (code)" : {
+      "comment" : "Unexpected Code"
     }
   },
   "version" : "1.0"

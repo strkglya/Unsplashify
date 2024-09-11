@@ -9,6 +9,11 @@ import Foundation
 
 enum LocalizedString {
 
+    enum HomePageViewController {
+        static let noPhotos = String(localized: "NoPhotosFound.String")
+        static let loadingPhotos = String(localized: "LoadingPhotos.String")
+        static let enterText = String(localized: "EnterText.String")
+    }
      enum PhotoDetailsPresenter {
 
          static let permissionDeniedTitle = String(localized: "PermissionDeniedTitle.String")
