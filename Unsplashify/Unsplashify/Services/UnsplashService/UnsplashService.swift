@@ -41,7 +41,9 @@ final class UnsplashService: UnsplashServiceProtocol {
     }
 
     func searchForPhotos(query: String) async throws -> UnsplashSearchResponse {
-        var urlComponents = URLComponents(string: Constants.baseURL)!
+        guard var urlComponents = URLComponents(string: Constants.baseURL) else {
+            return UnsplashSearchResponse(results: [])
+        }
         urlComponents.path = "/search/photos"
         urlComponents.queryItems = [URLQueryItem(name: "query", value: query),
                                     URLQueryItem(name: "per_page", value: "30")

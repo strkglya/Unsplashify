@@ -34,7 +34,7 @@ final class HomePagePresenter: HomePagePresenterProtocol {
     private var recentSearches: [String] = []
     private var filteredRecentSearches: [String] = [] {
         didSet {
-            viewController?.update()
+            viewController?.updateSearchTerms()
         }
     }
     
@@ -88,7 +88,7 @@ final class HomePagePresenter: HomePagePresenterProtocol {
             let newPhotos = mapToPhotoInfoModels(from: result)
             photos = newPhotos
             await loadImagesForPhotos(from: result)
-            viewController?.check(data: photos)
+            viewController?.updateAfterLoad()
         } catch {
             print("Ошибка загрузки фотографий: \(error)")
         }
@@ -102,7 +102,7 @@ final class HomePagePresenter: HomePagePresenterProtocol {
             let newPhotos = mapToPhotoInfoModels(from: searchResult)
             photos = newPhotos
             await loadImagesForPhotos(from: searchResult)
-            viewController?.check(data: photos)
+            viewController?.updateAfterLoad()
         } catch {
             print(error.localizedDescription)
         }
