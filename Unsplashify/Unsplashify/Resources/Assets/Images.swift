@@ -41,4 +41,22 @@ enum Images {
             }
         }
     }
+
+    enum HomePageViewController {
+        case sortIcon
+        case gridIconForOne
+        case gridIconForTwo
+
+
+        var image: UIImage? {
+            switch self {
+            case .sortIcon:
+                return UIImage(systemName: "arrow.up.arrow.down")
+            case .gridIconForOne:
+                return UIImage(systemName: "rectangle.grid.1x2")
+            case .gridIconForTwo:
+                return UIImage(systemName: "rectangle.grid.2x2")
+            }
+        }
+    }
 }

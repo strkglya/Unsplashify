@@ -14,9 +14,23 @@ protocol PhotoCollectionLayoutDelegate {
 
 class PhotoCollectionLayout: UICollectionViewLayout {
 
+    enum Columns {
+        case one
+        case two
+
+        var columnsAmount: Int {
+            switch self {
+            case .one:
+                return 1
+            case .two:
+                return 2
+            }
+        }
+    }
+
     var delegate: PhotoCollectionLayoutDelegate?
 
-    var numberOfColumns: Int = 2
+    var numberOfColumns: Columns = .two
     var cellPadding: CGFloat = 5.0
 
     private var contentHeight: CGFloat = 0.0
@@ -33,13 +47,13 @@ class PhotoCollectionLayout: UICollectionViewLayout {
         contentHeight = 0
         guard let collectionView = collectionView else { return }
 
-            let columnWidth = CGFloat(numberOfColumns) > 0 ? contentWidth / CGFloat(numberOfColumns) : contentWidth
+        let columnWidth = CGFloat(numberOfColumns.columnsAmount) > 0 ? contentWidth / CGFloat(numberOfColumns.columnsAmount) : contentWidth
             var xOffsets = [CGFloat]()
-            for column in 0..<numberOfColumns {
+        for column in 0..<numberOfColumns.columnsAmount {
                 xOffsets.append(CGFloat(column) * columnWidth)
             }
             var column = 0
-            var yOffsets = [CGFloat](repeating: 0, count: numberOfColumns)
+        var yOffsets = [CGFloat](repeating: 0, count: numberOfColumns.columnsAmount)
 
             for item in 0..<collectionView.numberOfItems(inSection: 0) {
                 let indexPath = IndexPath(item: item, section: 0)
@@ -78,5 +92,10 @@ class PhotoCollectionLayout: UICollectionViewLayout {
             }
         }
         return layoutAttributes
+    }
+
+    func toggleNumberOfColumns() {
+        numberOfColumns = (numberOfColumns == .one) ? .two : .one
+        invalidateLayout()
     }
 }

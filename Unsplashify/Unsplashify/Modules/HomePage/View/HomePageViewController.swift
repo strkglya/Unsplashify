@@ -29,6 +29,8 @@ final class HomePageViewController: UIViewController {
         static let cellHeight: CGFloat = 40
         static let loadingLabelTopOffset: CGFloat = 16
         static let labelFontSize: CGFloat = 16
+        static let iconsHeightWidth: CGFloat = 40
+        static let searchStackOffset: CGFloat = 8
     }
 
     // MARK: - Properties
@@ -43,6 +45,38 @@ final class HomePageViewController: UIViewController {
         searchBar.searchBarStyle = .minimal
         searchBar.placeholder = LocalizedString.HomePageViewController.enterText
         return searchBar
+    }()
+
+    private lazy var sortButton: UIButton = {
+        let button = UIButton()
+        button.setImage(Images.HomePageViewController.sortIcon.image, for: .normal)
+        button.tintColor = .black
+        button.addTarget(
+            self,
+            action: #selector(sortByLikes),
+            for: .touchUpInside
+        )
+        return button
+    }()
+
+    private lazy var gridButton: UIButton = {
+        let button = UIButton()
+        button.setImage(UIImage(systemName: "rectangle.grid.1x2"), for: .normal)
+        button.tintColor = .black
+        button.addTarget(
+            self,
+            action: #selector(changeGrid),
+            for: .touchUpInside
+        )
+        return button
+    }()
+
+    private lazy var searchStackView: UIStackView = {
+        let searchStackView = UIStackView()
+        searchStackView.addArrangedSubview(photoSearchBar)
+        searchStackView.addArrangedSubview(sortButton)
+        searchStackView.addArrangedSubview(gridButton)
+        return searchStackView
     }()
 
     private lazy var recentSearchesTableView: UITableView = {
@@ -122,6 +156,7 @@ final class HomePageViewController: UIViewController {
         view.addSubview(photoSearchBar)
         view.addSubview(photosCollectionView)
         view.addSubview(recentSearchesTableView)
+        view.addSubview(searchStackView)
     }
 
     private func updateUIAfterLoading() {
@@ -205,13 +240,23 @@ final class HomePageViewController: UIViewController {
         loadingLabel.translatesAutoresizingMaskIntoConstraints = false
         recentSearchesTableView.translatesAutoresizingMaskIntoConstraints = false
         noResultsLabel.translatesAutoresizingMaskIntoConstraints = false
+        gridButton.translatesAutoresizingMaskIntoConstraints = false
+        searchStackView.translatesAutoresizingMaskIntoConstraints = false
+        sortButton.translatesAutoresizingMaskIntoConstraints = false
 
         NSLayoutConstraint.activate([
-            photoSearchBar.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-            photoSearchBar.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 8),
-            photoSearchBar.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -8),
+            gridButton.widthAnchor.constraint(equalToConstant: Constants.iconsHeightWidth),
+            gridButton.heightAnchor.constraint(equalToConstant: Constants.iconsHeightWidth),
+            sortButton.widthAnchor.constraint(equalToConstant: Constants.iconsHeightWidth),
+            sortButton.heightAnchor.constraint(equalToConstant: Constants.iconsHeightWidth),
 
-            photosCollectionView.topAnchor.constraint(equalTo: photoSearchBar.bottomAnchor),
+            searchStackView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            searchStackView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: Constants.searchStackOffset),
+            searchStackView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -Constants.searchStackOffset),
+            searchStackView.heightAnchor.constraint(equalToConstant: Constants.iconsHeightWidth),
+            
+
+            photosCollectionView.topAnchor.constraint(equalTo: searchStackView.bottomAnchor),
             photosCollectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             photosCollectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             photosCollectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
@@ -221,13 +266,28 @@ final class HomePageViewController: UIViewController {
             loadingLabel.topAnchor.constraint(equalTo: loadingIndicator.bottomAnchor, constant: Constants.loadingLabelTopOffset),
             loadingLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
 
-            recentSearchesTableView.topAnchor.constraint(equalTo: photoSearchBar.bottomAnchor),
+            recentSearchesTableView.topAnchor.constraint(equalTo: searchStackView.bottomAnchor),
             recentSearchesTableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             recentSearchesTableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
 
             noResultsLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             noResultsLabel.centerYAnchor.constraint(equalTo: view.centerYAnchor)
         ])
+    }
+
+    @objc private func sortByLikes() {
+        photos.sort { $0.likes > $1.likes }
+        photosCollectionView.reloadData()
+    }
+
+    @objc private func changeGrid() {
+        guard let layout = photosCollectionView.collectionViewLayout as? PhotoCollectionLayout else {
+            return
+        }
+        layout.toggleNumberOfColumns()
+        let isTwoColumns = layout.numberOfColumns == .two
+        let iconName = isTwoColumns ? Images.HomePageViewController.gridIconForOne.image : Images.HomePageViewController.gridIconForTwo.image
+        gridButton.setImage(iconName, for: .normal)
     }
 
     // MARK: - Injection
