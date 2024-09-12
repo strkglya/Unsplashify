@@ -37,6 +37,7 @@ final class HomePagePresenter: HomePagePresenterProtocol {
             viewController?.update()
         }
     }
+    
     init(
         viewController: HomePageViewControllerProtocol,
         userDefaultsManager: UserDefaultsManagerProtocol
@@ -84,16 +85,10 @@ final class HomePagePresenter: HomePagePresenterProtocol {
     func loadAllPhotos() async {
         do {
             let result = try await service?.getAllPhotos() ?? []
-            let newPhotos = result.map {
-                PhotoInfoModel(
-                    image: nil,
-                    authorName: $0.user.name,
-                    description: $0.description,
-                    likes: $0.likes
-                )
-            }
+            let newPhotos = mapToPhotoInfoModels(from: result)
             photos = newPhotos
             await loadImagesForPhotos(from: result)
+            viewController?.check(data: photos)
         } catch {
             print("Ошибка загрузки фотографий: \(error)")
         }
@@ -104,21 +99,28 @@ final class HomePagePresenter: HomePagePresenterProtocol {
             let result = try await service?.searchForPhotos(query: searchWord) ?? UnsplashSearchResponse(results: [])
 
             let searchResult = result.results
-            let newPhotos = searchResult.map {
-                PhotoInfoModel(
-                    image: nil,
-                    authorName: $0.user.name,
-                    description: $0.description,
-                    likes: $0.likes
-                )
-            }
+            let newPhotos = mapToPhotoInfoModels(from: searchResult)
             photos = newPhotos
             await loadImagesForPhotos(from: searchResult)
+            viewController?.check(data: photos)
         } catch {
             print(error.localizedDescription)
         }
     }
     // MARK: - Private Methods
+
+    private func mapToPhotoInfoModels(from results: [UnsplashServiceResponse]) -> [PhotoInfoModel] {
+        return results.map {
+            PhotoInfoModel(
+                image: nil,
+                authorName: $0.user.name,
+                description: $0.description,
+                likes: $0.likes,
+                location: $0.user.location,
+                bio: $0.user.bio
+            )
+        }
+    }
 
     private func saveRecentSearches() {
         userDefaultsManager?.recentSearches = recentSearches

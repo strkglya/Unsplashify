@@ -9,6 +9,7 @@ import UIKit
 import AVFoundation
 
 protocol HomePageViewControllerProtocol: AnyObject {
+    func check(data: [PhotoInfoModel])
     func update()
 }
 
@@ -136,12 +137,8 @@ final class HomePageViewController: UIViewController {
                 return
             }
             self.noResultsLabel.isHidden = true
-
             showLoadingIndicator()
             await presenter.loadAllPhotos()
-            self.photos = presenter.getPhotos()
-
-            updateUIAfterLoading()
         }
     }
 
@@ -155,9 +152,6 @@ final class HomePageViewController: UIViewController {
 
             addSearchTermToRecent(searchTerm)
             await presenter.findBySearchTerm(searchWord: searchTerm)
-            self.photos = presenter.getPhotos()
-
-            updateUIAfterLoading()
 
             photosCollectionView.setContentOffset(
                 CGPoint(
@@ -276,6 +270,7 @@ extension HomePageViewController: UITableViewDelegate {
 }
 
 // MARK: - Extension: UISearchBarDelegate
+
 extension HomePageViewController: UISearchBarDelegate {
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         guard let presenter = presenter else {
@@ -317,10 +312,7 @@ extension HomePageViewController: UICollectionViewDataSource {
         ) as? HomePageCollectionCell else {
             return UICollectionViewCell()
         }
-        cell.configure(
-            image: photos[indexPath.row].image,
-            text: photos[indexPath.row].description
-        )
+        cell.configure(model: photos[indexPath.row])
         return cell
     }
 
@@ -382,6 +374,13 @@ extension HomePageViewController: PhotoCollectionLayoutDelegate {
 }
 
 extension HomePageViewController: HomePageViewControllerProtocol {
+    func check(data: [PhotoInfoModel]) {
+        DispatchQueue.main.async { [weak self] in
+            self?.photos = self?.presenter?.getPhotos() ?? []
+            self?.updateUIAfterLoading()
+        }
+    }
+
     func update() {
         DispatchQueue.main.async { [weak self] in
             guard let self = self else {

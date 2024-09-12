@@ -277,10 +277,10 @@
 		7AC310EF2C8C485C00E9E936 /* HomePage */ = {
 			isa = PBXGroup;
 			children = (
+				7AEF339A2C92387100FDD531 /* Model */,
 				7A1CFEA12C8DF37E00A433E9 /* Builder */,
 				7A1CFE9E2C8DE3A000A433E9 /* Presenter */,
 				7AC310F92C8C5A8500E9E936 /* View */,
-				7A1CFE8A2C8DA19000A433E9 /* PhotoInfoModel.swift */,
 			);
 			path = HomePage;
 			sourceTree = "<group>";
@@ -337,6 +337,14 @@
 				7AEF33982C91D5C400FDD531 /* RecentSearchesTableViewCell.swift */,
 			);
 			path = Cell;
+			sourceTree = "<group>";
+		};
+		7AEF339A2C92387100FDD531 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				7A1CFE8A2C8DA19000A433E9 /* PhotoInfoModel.swift */,
+			);
+			path = Model;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
