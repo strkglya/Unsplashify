@@ -19,11 +19,11 @@ final class PhotoDetailsViewController: UIViewController {
     private enum Constants {
 
         static let imageViewCornerRadius: CGFloat = 16
-        static let imageViewHeight: CGFloat = 400
+        static let imageViewHeight: CGFloat = 450
         static let imageViewTopOffset: CGFloat = 12
         static let imageViewSidesOffset: CGFloat = 16
 
-        static let stackViewSpacing: CGFloat = 8
+        static let stackViewSpacing: CGFloat = 6
         static let stackViewSidesOffset: CGFloat = 16
 
         static let saveButtonFontSize: CGFloat = 18
@@ -32,7 +32,7 @@ final class PhotoDetailsViewController: UIViewController {
         static let saveButtonBottomPadding: CGFloat = -16
         static let saveButtonHeight: CGFloat = 48
         static let saveButtonSidesOffset: CGFloat = 16
-
+        static let likesStackWidthHeight: CGFloat = 30
     }
 
     // MARK: - Properties
@@ -41,7 +41,7 @@ final class PhotoDetailsViewController: UIViewController {
         let imageView = UIImageView()
         imageView.layer.cornerRadius = Constants.imageViewCornerRadius
         imageView.clipsToBounds = true
-        imageView.contentMode = .redraw
+        imageView.contentMode = .scaleAspectFill
         return imageView
     }()
 
@@ -49,12 +49,32 @@ final class PhotoDetailsViewController: UIViewController {
         let label = UILabel()
         label.font = .systemFont(
             ofSize: 18,
-            weight: .semibold
+            weight: .bold
         )
-        label.text = "This is author name"
         label.numberOfLines = .zero
         return label
     }()
+
+    private lazy var authorLocation: UILabel = {
+        let label = UILabel()
+        label.font = .systemFont(
+            ofSize: 16,
+            weight: .semibold
+        )
+        label.numberOfLines = .zero
+        return label
+    }()
+
+    private lazy var authorBio: UILabel = {
+        let label = UILabel()
+        label.font = .systemFont(
+            ofSize: 12,
+            weight: .semibold
+        )
+        label.numberOfLines = .zero
+        return label
+    }()
+
 
     private lazy var descriptionLabel: UILabel = {
         let label = UILabel()
@@ -62,14 +82,40 @@ final class PhotoDetailsViewController: UIViewController {
             ofSize: 16,
             weight: .regular
         )
-        label.text = "This is a description"
         label.numberOfLines = .zero
         return label
+    }()
+
+    private lazy var heartImage: UIImageView = {
+        let imageView = UIImageView()
+        imageView.image = Images.HomePageCollectionCell.heart.image
+        imageView.tintColor = .black
+        return imageView
+    }()
+
+    private lazy var likesAmountLabel: UILabel = {
+        let label = UILabel()
+        label.numberOfLines = 1
+        label.textAlignment = .center
+        label.font = .systemFont(ofSize: 14)
+        return label
+    }()
+
+    private lazy var likesStackView: UIStackView = {
+        let stackView = UIStackView()
+        stackView.addArrangedSubview(heartImage)
+        stackView.addArrangedSubview(likesAmountLabel)
+        stackView.axis = .vertical
+        stackView.alignment = .center
+        stackView.distribution = .fillProportionally
+        return stackView
     }()
 
     private lazy var textStackView: UIStackView = {
         let stackView = UIStackView()
         stackView.addArrangedSubview(authorLabel)
+        stackView.addArrangedSubview(authorLocation)
+        stackView.addArrangedSubview(authorBio)
         stackView.addArrangedSubview(descriptionLabel)
         stackView.spacing = Constants.stackViewSpacing
         stackView.axis = .vertical
@@ -125,14 +171,13 @@ final class PhotoDetailsViewController: UIViewController {
         setUpConstraints()
     }
 
-    // MARK: - Methods
-
     // MARK: - Private Methods
 
     private func addSubviews() {
         view.addSubview(detailsImageView)
         view.addSubview(textStackView)
         view.addSubview(saveImageButton)
+        view.addSubview(likesStackView)
     }
 
     private func setUpNavBar() {
@@ -143,47 +188,29 @@ final class PhotoDetailsViewController: UIViewController {
         detailsImageView.translatesAutoresizingMaskIntoConstraints = false
         saveImageButton.translatesAutoresizingMaskIntoConstraints = false
         textStackView.translatesAutoresizingMaskIntoConstraints = false
+        likesStackView.translatesAutoresizingMaskIntoConstraints = false
 
         NSLayoutConstraint.activate([
-            detailsImageView.topAnchor.constraint(
-                equalTo: view.safeAreaLayoutGuide.topAnchor,
-                constant: Constants.imageViewTopOffset
-            ),
-            detailsImageView.leadingAnchor.constraint(
-                equalTo: view.leadingAnchor,
-                constant: Constants.imageViewSidesOffset
-            ),
-            detailsImageView.trailingAnchor.constraint(
-                equalTo: view.trailingAnchor, 
-                constant: -Constants.imageViewSidesOffset
-            ),
+            detailsImageView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor,constant: Constants.imageViewTopOffset),
+            detailsImageView.leadingAnchor.constraint(equalTo: view.leadingAnchor,constant: Constants.imageViewSidesOffset),
+            detailsImageView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -Constants.imageViewSidesOffset),
             detailsImageView.heightAnchor.constraint(equalToConstant: Constants.imageViewHeight),
 
-            textStackView.leadingAnchor.constraint(
-                equalTo: view.leadingAnchor,
-                constant: Constants.stackViewSidesOffset
-            ),
-            textStackView.trailingAnchor.constraint(
-                equalTo: view.trailingAnchor,
-                constant: -Constants.stackViewSidesOffset
-            ),
-            textStackView.topAnchor.constraint(
-                equalTo: detailsImageView.bottomAnchor,
-                constant: Constants.stackViewSidesOffset
-            ),
+            textStackView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: Constants.stackViewSidesOffset),
+            textStackView.trailingAnchor.constraint(equalTo: likesStackView.leadingAnchor, constant: -Constants.stackViewSidesOffset),
+            textStackView.topAnchor.constraint(equalTo: detailsImageView.bottomAnchor, constant: Constants.stackViewSidesOffset),
 
-            saveImageButton.bottomAnchor.constraint(
-                equalTo: view.safeAreaLayoutGuide.bottomAnchor,
-                constant: Constants.saveButtonSidesOffset
-            ),
-            saveImageButton.leadingAnchor.constraint(
-                equalTo: view.leadingAnchor,
-                constant: Constants.saveButtonSidesOffset
-            ),
-            saveImageButton.trailingAnchor.constraint(
-                equalTo: view.trailingAnchor,
-                constant: -Constants.saveButtonSidesOffset
-            ),
+            likesStackView.topAnchor.constraint(equalTo: detailsImageView.bottomAnchor, constant: Constants.stackViewSidesOffset),
+            likesStackView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -Constants.stackViewSidesOffset),
+            likesStackView.widthAnchor.constraint(equalToConstant: Constants.likesStackWidthHeight),
+
+            heartImage.heightAnchor.constraint(equalToConstant: Constants.likesStackWidthHeight),
+            heartImage.widthAnchor.constraint(equalToConstant: Constants.likesStackWidthHeight),
+
+
+            saveImageButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: Constants.saveButtonSidesOffset),
+            saveImageButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: Constants.saveButtonSidesOffset),
+            saveImageButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -Constants.saveButtonSidesOffset),
             saveImageButton.heightAnchor.constraint(equalToConstant: Constants.saveButtonHeight)
         ])
     }
@@ -213,12 +240,18 @@ extension PhotoDetailsViewController: PhotoDetailsViewControllerProtocol {
     func update(model: PhotoInfoModel) {
         detailsImageView.image = model.image
         authorLabel.text = model.authorName
-        descriptionLabel.text = model.description
+        descriptionLabel.text = model.formattedDescription
+        likesAmountLabel.text = model.formattedLikes
+        authorBio.text = model.bio
+        authorLocation.text = model.location
     }
 
     func present(controller: UIViewController) {
-        DispatchQueue.main.async {
-            self.present(controller, animated: true, completion: nil)
+        DispatchQueue.main.async { [weak self] in
+            self?.present(
+                controller,
+                animated: true
+            )
         }
     }
 }

@@ -12,11 +12,15 @@ class HomePageCollectionCell: UICollectionViewCell {
     // MARK: - Constants
 
     private enum Constants {
-        static let labelFontSize: CGFloat = 12
         static let cornerRadiusDivider: CGFloat = 10
         static let labelLeadingTrailingOffset: CGFloat = 5
         static let labelBottomOffset: CGFloat = -5
         static let photoImageBottomOffset: CGFloat = -10
+        static let likesLinesAmount = 1
+        static let stackViewSpacing: CGFloat = 1
+        static let descriptionLabelHeight: CGFloat = 50
+        static let heartHeightWidth: CGFloat = 20
+        static let likesStackWidth: CGFloat = 30
     }
 
     // MARK: - Properties
@@ -27,12 +31,45 @@ class HomePageCollectionCell: UICollectionViewCell {
         imageView.clipsToBounds = true
         return imageView
     }()
-    private let activityIndicator = UIActivityIndicatorView(style: .medium)
+
     private lazy var descriptionLabel: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: Constants.labelFontSize)
+        label.font = .systemFont(ofSize: 12)
         label.numberOfLines = .zero
         return label
+    }()
+
+    private lazy var heartImage: UIImageView = {
+        let imageView = UIImageView()
+        imageView.image = Images.HomePageCollectionCell.heart.image
+        imageView.tintColor = .black
+        return imageView
+    }()
+
+    private lazy var likesAmountLabel: UILabel = {
+        let label = UILabel()
+        label.numberOfLines = Constants.likesLinesAmount
+        label.textAlignment = .center
+        label.font = .systemFont(ofSize: 12)
+        return label
+    }()
+
+    private lazy var likesStackView: UIStackView = {
+        let stackView = UIStackView()
+        stackView.addArrangedSubview(heartImage)
+        stackView.addArrangedSubview(likesAmountLabel)
+        stackView.axis = .vertical
+        stackView.alignment = .center
+        return stackView
+    }()
+
+    private lazy var descriptionStackView: UIStackView = {
+        let stackView = UIStackView()
+        stackView.addArrangedSubview(descriptionLabel)
+        stackView.addArrangedSubview(likesStackView)
+        stackView.distribution = .fillProportionally
+        stackView.spacing = Constants.stackViewSpacing
+        return stackView
     }()
 
     // MARK: - Initializer
@@ -45,8 +82,8 @@ class HomePageCollectionCell: UICollectionViewCell {
 
     required init?(coder: NSCoder) {
         super.init(coder: coder)
-
     }
+
     // MARK: - Override
 
     override func layoutSubviews() {
@@ -57,47 +94,41 @@ class HomePageCollectionCell: UICollectionViewCell {
 
     // MARK: - Methods
 
-    func configure(image: UIImage?, text: String) {
-        if let image = image {
-            photoImageView.image = image
-            activityIndicator.stopAnimating()
-            descriptionLabel.text = text
-        } else {
-            activityIndicator.startAnimating()
-            photoImageView.image = nil
-        }
+    func configure(model: PhotoInfoModel) {
+        photoImageView.image = model.image
+        descriptionLabel.text = model.formattedDescription
+        likesAmountLabel.text = model.formattedLikes
     }
 
     // MARK: - Private Methods
 
     private func addSubviews() {
-        addSubview(activityIndicator)
         addSubview(photoImageView)
-        addSubview(descriptionLabel)
+        addSubview(descriptionStackView)
     }
 
     private func setUpConstraints() {
-        activityIndicator.translatesAutoresizingMaskIntoConstraints = false
         photoImageView.translatesAutoresizingMaskIntoConstraints = false
+        descriptionStackView.translatesAutoresizingMaskIntoConstraints = false
+        heartImage.translatesAutoresizingMaskIntoConstraints = false
+        likesAmountLabel.translatesAutoresizingMaskIntoConstraints = false
         descriptionLabel.translatesAutoresizingMaskIntoConstraints = false
 
         NSLayoutConstraint.activate([
+            descriptionLabel.heightAnchor.constraint(equalToConstant: Constants.descriptionLabelHeight),
 
-            descriptionLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: Constants.labelLeadingTrailingOffset),
-            descriptionLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -Constants.labelLeadingTrailingOffset),
-            descriptionLabel.bottomAnchor.constraint(equalTo: bottomAnchor, constant: Constants.labelBottomOffset),
+            descriptionStackView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: Constants.labelLeadingTrailingOffset),
+            descriptionStackView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -Constants.labelLeadingTrailingOffset),
+            descriptionStackView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: Constants.labelBottomOffset),
+
+            heartImage.heightAnchor.constraint(equalToConstant: Constants.heartHeightWidth),
+            heartImage.widthAnchor.constraint(equalToConstant: Constants.heartHeightWidth),
+            likesAmountLabel.widthAnchor.constraint(equalToConstant: Constants.likesStackWidth),
 
             photoImageView.topAnchor.constraint(equalTo: topAnchor),
             photoImageView.leadingAnchor.constraint(equalTo: leadingAnchor),
             photoImageView.trailingAnchor.constraint(equalTo: trailingAnchor),
-            photoImageView.bottomAnchor.constraint(equalTo: descriptionLabel.topAnchor, constant: Constants.photoImageBottomOffset),
-
-            activityIndicator.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
-            activityIndicator.centerYAnchor.constraint(equalTo: contentView.centerYAnchor)
+            photoImageView.bottomAnchor.constraint(equalTo: descriptionStackView.topAnchor, constant: Constants.photoImageBottomOffset)
         ])
     }
-
-    // MARK: - Injection
-
-    // MARK: - Extension
 }

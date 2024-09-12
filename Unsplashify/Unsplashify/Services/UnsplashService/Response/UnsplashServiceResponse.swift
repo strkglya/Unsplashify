@@ -12,29 +12,22 @@ struct UnsplashSearchResponse: Codable {
 }
 
 struct UnsplashServiceResponse: Codable {
-    let id: String
-    let createdAt: String
-    let width: Int
-    let height: Int
-    let blurHash: String?
+
     let description: String
     let likes: Int
     let urls: Urls
     let user: User
-    let date: String
 
     enum CodingKeys: String, CodingKey {
-        case id, width, height, urls, user, likes
-        case createdAt = "created_at"
-        case blurHash = "blur_hash"
+        case urls, user, likes
         case description = "alt_description"
-        case date = "updated_at"
     }
 }
 
 struct User: Codable, Hashable {
     let name: String
     let location: String?
+    let bio: String?
 }
 
 // MARK: - Urls

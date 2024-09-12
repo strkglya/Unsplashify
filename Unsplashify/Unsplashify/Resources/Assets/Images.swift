@@ -30,4 +30,15 @@ enum Images {
             }
         }
     }
+
+    enum HomePageCollectionCell {
+        case heart
+
+        var image: UIImage? {
+            switch self {
+            case .heart:
+                return UIImage(systemName: "heart")
+            }
+        }
+    }
 }
