@@ -22,25 +22,25 @@ enum NetworkError: Error, LocalizedError {
     var errorDescription: String? {
         switch self {
         case .invaildRequest:
-            return NSLocalizedString("Failed to make a request", comment: "Invalid Request")
+            return String("Failed to make a request")
         case .invalidUrl:
-            return NSLocalizedString("Invalid url and/or query", comment: "Invalid URL")
+            return String("Invalid url and/or query")
         case .noResponse:
-            return NSLocalizedString("No response from the server", comment: "No Response")
+            return String("No response from the server")
         case .unauthorized:
-            return NSLocalizedString("Unathorized access to the server", comment: "Unauthorized")
+            return String("Unathorized access to the server")
         case .forbidden:
-            return NSLocalizedString("API access rate exceeded", comment: "Forbidden")
+            return String("API access rate exceeded")
         case .notFound:
-            return NSLocalizedString("Requested page was not found", comment: "Not Found")
+            return String("Requested page was not found")
         case .unexpectedStatusCode(let code):
-            return NSLocalizedString("Unexpected status code \(code)", comment: "Unexpected Code")
+            return String("Unexpected status code \(code)")
         case .invaildData:
-            return NSLocalizedString("Failed to read data", comment: "Invalid Data")
+            return String("Failed to read data")
         case .decodeFailure:
-            return NSLocalizedString("Failed to decode data", comment: "Decoding Failure")
+            return String("Failed to decode data")
         case .unknown(let message):
-            return NSLocalizedString(message, comment: "Unknown Error")
+            return String(message)
         }
     }
 }

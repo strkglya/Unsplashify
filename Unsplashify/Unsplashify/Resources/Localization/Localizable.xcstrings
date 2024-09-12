@@ -1,9 +1,6 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
-    "API access rate exceeded" : {
-      "comment" : "Forbidden"
-    },
     "CancelAction.String" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -38,18 +35,6 @@
         }
       }
     },
-    "Failed to decode data" : {
-      "comment" : "Decoding Failure"
-    },
-    "Failed to make a request" : {
-      "comment" : "Invalid Request"
-    },
-    "Failed to read data" : {
-      "comment" : "Invalid Data"
-    },
-    "Invalid url and/or query" : {
-      "comment" : "Invalid URL"
-    },
     "LoadingPhotos.String" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -66,9 +51,6 @@
           }
         }
       }
-    },
-    "No response from the server" : {
-      "comment" : "No Response"
     },
     "NoPhotosFound.String" : {
       "extractionState" : "manual",
@@ -120,9 +102,6 @@
           }
         }
       }
-    },
-    "Requested page was not found" : {
-      "comment" : "Not Found"
     },
     "SaveButtonTitle.String" : {
       "extractionState" : "manual",
@@ -191,12 +170,6 @@
           }
         }
       }
-    },
-    "Unathorized access to the server" : {
-      "comment" : "Unauthorized"
-    },
-    "Unexpected status code (code)" : {
-      "comment" : "Unexpected Code"
     }
   },
   "version" : "1.0"
