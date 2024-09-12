@@ -34,6 +34,7 @@
 		7AEF33922C8F075A00FDD531 /* AlertManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7AEF33912C8F075A00FDD531 /* AlertManager.swift */; };
 		7AEF33942C917D6A00FDD531 /* UserDefaultsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7AEF33932C917D6A00FDD531 /* UserDefaultsManager.swift */; };
 		7AEF33992C91D5C400FDD531 /* RecentSearchesTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7AEF33982C91D5C400FDD531 /* RecentSearchesTableViewCell.swift */; };
+		7AEF339C2C930A2100FDD531 /* ViewController + Extension .swift in Sources */ = {isa = PBXBuildFile; fileRef = 7AEF339B2C930A2100FDD531 /* ViewController + Extension .swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -84,6 +85,7 @@
 		7AEF33912C8F075A00FDD531 /* AlertManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertManager.swift; sourceTree = "<group>"; };
 		7AEF33932C917D6A00FDD531 /* UserDefaultsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDefaultsManager.swift; sourceTree = "<group>"; };
 		7AEF33982C91D5C400FDD531 /* RecentSearchesTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecentSearchesTableViewCell.swift; sourceTree = "<group>"; };
+		7AEF339B2C930A2100FDD531 /* ViewController + Extension .swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ViewController + Extension .swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -242,6 +244,7 @@
 		7AC310EB2C8C47D600E9E936 /* Utilities */ = {
 			isa = PBXGroup;
 			children = (
+				7AEF339B2C930A2100FDD531 /* ViewController + Extension .swift */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
@@ -496,6 +499,7 @@
 				7A1CFE8B2C8DA19000A433E9 /* PhotoInfoModel.swift in Sources */,
 				7A1CFEA82C8E1D8400A433E9 /* PhotoDetailsViewController.swift in Sources */,
 				7AEF33922C8F075A00FDD531 /* AlertManager.swift in Sources */,
+				7AEF339C2C930A2100FDD531 /* ViewController + Extension .swift in Sources */,
 				7AC310BB2C8C45D900E9E936 /* AppDelegate.swift in Sources */,
 				7A1CFE9D2C8DDBA200A433E9 /* NetworkError.swift in Sources */,
 				7A1CFE922C8DCC5700A433E9 /* UnsplashServiceResponse.swift in Sources */,

@@ -9,8 +9,8 @@ import UIKit
 import AVFoundation
 
 protocol HomePageViewControllerProtocol: AnyObject {
-    func check(data: [PhotoInfoModel])
-    func update()
+    func updateAfterLoad()
+    func updateSearchTerms()
 }
 
 final class HomePageViewController: UIViewController {
@@ -31,6 +31,7 @@ final class HomePageViewController: UIViewController {
         static let labelFontSize: CGFloat = 16
         static let iconsHeightWidth: CGFloat = 40
         static let searchStackOffset: CGFloat = 8
+        static let cellIdentifier = "SearchCell"
     }
 
     // MARK: - Properties
@@ -49,7 +50,10 @@ final class HomePageViewController: UIViewController {
 
     private lazy var sortButton: UIButton = {
         let button = UIButton()
-        button.setImage(Images.HomePageViewController.sortIcon.image, for: .normal)
+        button.setImage(
+            Images.HomePageViewController.sortIcon.image,
+            for: .normal
+        )
         button.tintColor = .black
         button.addTarget(
             self,
@@ -61,7 +65,10 @@ final class HomePageViewController: UIViewController {
 
     private lazy var gridButton: UIButton = {
         let button = UIButton()
-        button.setImage(UIImage(systemName: "rectangle.grid.1x2"), for: .normal)
+        button.setImage(
+            Images.HomePageViewController.gridIconForOne.image,
+            for: .normal
+        )
         button.tintColor = .black
         button.addTarget(
             self,
@@ -86,7 +93,7 @@ final class HomePageViewController: UIViewController {
         tableView.isHidden = true
         tableView.register(
             UITableViewCell.self,
-            forCellReuseIdentifier: "SearchCell"
+            forCellReuseIdentifier: Constants.cellIdentifier
         )
         return tableView
     }()
@@ -119,7 +126,10 @@ final class HomePageViewController: UIViewController {
 
     private lazy var photosCollectionView: UICollectionView = {
         let layout = PhotoCollectionLayout()
-        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        let collectionView = UICollectionView(
+            frame: .zero,
+            collectionViewLayout: layout
+        )
         collectionView.register(
             HomePageCollectionCell.self,
             forCellWithReuseIdentifier: String(describing: HomePageCollectionCell.self)
@@ -141,6 +151,7 @@ final class HomePageViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
+        self.hideKeyboardWhenTappedAround()
         loadRecentSearches()
         loadPhotos()
         addSubviews()
@@ -305,7 +316,7 @@ extension HomePageViewController: UITableViewDataSource {
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "SearchCell", for: indexPath)
+        let cell = tableView.dequeueReusableCell(withIdentifier: Constants.cellIdentifier, for: indexPath)
         cell.textLabel?.text = presenter?.getFilteredSearches()[indexPath.row]
         return cell
     }
@@ -434,14 +445,14 @@ extension HomePageViewController: PhotoCollectionLayoutDelegate {
 }
 
 extension HomePageViewController: HomePageViewControllerProtocol {
-    func check(data: [PhotoInfoModel]) {
+    func updateAfterLoad() {
         DispatchQueue.main.async { [weak self] in
             self?.photos = self?.presenter?.getPhotos() ?? []
             self?.updateUIAfterLoading()
         }
     }
 
-    func update() {
+    func updateSearchTerms() {
         DispatchQueue.main.async { [weak self] in
             guard let self = self else {
                 return
